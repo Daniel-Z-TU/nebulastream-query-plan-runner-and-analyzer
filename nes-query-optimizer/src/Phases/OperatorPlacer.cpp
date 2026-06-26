@@ -20,11 +20,15 @@
 #include <Util/Pointers.hpp>
 #include <DistributedLogicalPlan.hpp>
 
+#include <QueryOptimizer.hpp>
+
 namespace NES
 {
 DistributedLogicalPlan OperatorPlacer::place(LogicalPlan plan) const
 {
     BottomUpOperatorPlacer(copyPtr(workerCatalog)).apply(plan);
+
+    QueryOptimizer::writePlanToJson(plan, "AFTER_OPERATOR_PLACER");
 
     return QueryDecomposer(copyPtr(workerCatalog), copyPtr(sourceCatalog), copyPtr(sinkCatalog))
         .decompose(plan, defaultQueryOptimization.network);

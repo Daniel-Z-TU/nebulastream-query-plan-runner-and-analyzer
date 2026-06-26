@@ -33,6 +33,8 @@
 #include <Util/PlanRenderer.hpp>
 #include <QueryOptimizerConfiguration.hpp>
 
+#include <QueryOptimizer.hpp>
+
 namespace NES
 {
 
@@ -57,9 +59,12 @@ RuleBasedOptimizer::RuleBasedOptimizer(QueryOptimizerConfiguration defaultQueryO
 
 LogicalPlan RuleBasedOptimizer::optimize(LogicalPlan plan) const
 {
+    int i = 1;
     for (const auto& rule : ruleSequence)
     {
         plan = rule.apply(std::move(plan));
+        QueryOptimizer::writePlanToJson(plan, "AFTER_RULE_BASED_OPTIMIZER_RULE" + std::to_string(i));
+        i++;
     }
     return plan;
 }

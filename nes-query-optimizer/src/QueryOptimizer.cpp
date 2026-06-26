@@ -16,9 +16,32 @@
 
 #include <Plans/LogicalPlan.hpp>
 #include <DistributedLogicalPlan.hpp>
+#include <Serialization/QueryPlanSerializationUtil.hpp>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <google/protobuf/util/json_util.h>
 
 namespace NES
 {
+
+void QueryOptimizer::writePlanToJson(const LogicalPlan& plan, const std::string& phase)
+{
+    auto serialized = QueryPlanSerializationUtil::serializeQueryPlan(plan);
+    std::string json;
+    auto status = google::protobuf::util::MessageToJsonString(serialized, &json);
+
+    std::string path = phase + ".json";
+    std::ofstream file(path);
+
+    if (!file.is_open()) {
+        std::cerr << "ERROR: Could not open file: " << path << "\n";
+    } else {
+        file << json;
+        file.close();
+        std::cout << "Written to: " << path << "\n";
+    }
+}
 
 DistributedLogicalPlan QueryOptimizer::optimize(LogicalPlan plan) const
 {

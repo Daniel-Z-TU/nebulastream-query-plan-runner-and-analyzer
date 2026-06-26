@@ -48,6 +48,8 @@ public:
 
     [[nodiscard]] DistributedLogicalPlan optimize(LogicalPlan plan) const;
 
+    static void writePlanToJson(const LogicalPlan& plan, const std::string& phase);
+
 private:
     SemanticAnalyzer semanticAnalyzer;
     RuleBasedOptimizer ruleBasedOptimization;
